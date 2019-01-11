@@ -1053,6 +1053,8 @@ class WC_Subscriptions_Order {
 		if ( 0 != $order->get_subtotal() || ! wcs_order_contains_subscription( $order ) ) {
 			return $new_order_status;
 		}
+		
+		$subscriptions = wcs_get_subscriptions_for_order( $order_id );
 
 		if ( wcs_order_contains_resubscribe( $order ) ) {
 			$new_order_status = 'completed';
@@ -1068,6 +1070,9 @@ class WC_Subscriptions_Order {
 
 			if ( $all_switched || 1 == count( $order->get_items() ) ) {
 				$new_order_status = 'completed';
+				foreach ( $subscriptions as $subscription ) {
+                                        $subscription->payment_complete_for_order( $order );
+                                }
 			}
 		} else {
 			$subscriptions = wcs_get_subscriptions_for_order( $order_id );
